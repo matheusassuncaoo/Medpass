@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Especialidades - MedPass</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'home' %}" class="p-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i data-feather="activity" class="w-6 h-6 text-white"></i>
+                    </a>
+                    <h1 class="text-2xl font-bold text-gray-900">MedPass</h1>
+                    <span class="text-sm text-gray-500">/ Cadastro de Especialidades</span>
+                </div>
+                <a href="{% url 'home' %}" class="text-sm text-blue-600 hover:text-blue-700 flex items-center space-x-1">
+                    <i data-feather="arrow-left" class="w-4 h-4"></i>
+                    <span>Voltar ao Início</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-16">
+            <div class="flex items-center justify-center w-20 h-20 bg-purple-100 rounded-xl mb-6 mx-auto">
+                <i data-feather="clipboard" class="w-10 h-10 text-purple-600"></i>
+            </div>
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Cadastro de Especialidades</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Configure e organize as diferentes especialidades médicas do hospital
+            </p>
+        </div>
+
+        <!-- Funcionalidade em desenvolvimento -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-xl mb-6 mx-auto">
+                <i data-feather="tool" class="w-8 h-8 text-yellow-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">Em Desenvolvimento</h3>
+            <p class="text-gray-600 mb-6">Esta funcionalidade está sendo desenvolvida e estará disponível em breve.</p>
+            <a href="{% url 'home' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2">
+                <i data-feather="home" class="w-4 h-4"></i>
+                <span>Voltar ao Início</span>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>

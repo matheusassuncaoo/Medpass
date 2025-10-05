@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MedPass - Sistema de Senhas Hospitalares</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-6">
+          <div class="flex items-center space-x-3">
+            <div class="p-2 bg-blue-600 rounded-lg">
+              <i data-feather="activity" class="w-6 h-6 text-white"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">MedPass</h1>
+          </div>
+          <p class="text-sm text-gray-500">Sistema de Senhas Hospitalares</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <!-- Welcome Section -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+          Bem-vindo ao MedPass
+        </h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          Gerencie de forma eficiente o sistema de senhas e cadastros do seu
+          hospital
+        </p>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Central de Senha -->
+        <div
+          class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+        >
+          <div class="p-8">
+            <div
+              class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-xl mb-6 group-hover:bg-green-200 transition-colors duration-300"
+            >
+              <i data-feather="hash" class="w-8 h-8 text-green-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Central de Senhas
+            </h3>
+            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
+              Gerencie e controle a distribuição de senhas para diferentes
+              setores e especialidades
+            </p>
+            <a
+              href="{% url 'central_senhas' %}"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+            >
+              <span>Acessar Central</span>
+              <i data-feather="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Cadastro de Doutores -->
+        <div
+          class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+        >
+          <div class="p-8">
+            <div
+              class="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-xl mb-6 group-hover:bg-blue-200 transition-colors duration-300"
+            >
+              <i data-feather="user-plus" class="w-8 h-8 text-blue-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Cadastro de Doutores
+            </h3>
+            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
+              Registre e gerencie informações dos médicos e profissionais de
+              saúde
+            </p>
+            <a
+              href="{% url 'cadastrar_medicos' %}"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+            >
+              <span>Cadastrar Doutor</span>
+              <i data-feather="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Cadastro de Especialidade -->
+        <div
+          class="group bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
+        >
+          <div class="p-8">
+            <div
+              class="flex items-center justify-center w-16 h-16 bg-purple-100 rounded-xl mb-6 group-hover:bg-purple-200 transition-colors duration-300"
+            >
+              <i data-feather="clipboard" class="w-8 h-8 text-purple-600"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Cadastro de Especialidades
+            </h3>
+            <p class="text-gray-600 mb-6 text-sm leading-relaxed">
+              Configure e organize as diferentes especialidades médicas do
+              hospital
+            </p>
+            <a
+              href="{% url 'cadastrar_especialidade' %}"
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+            >
+              <span>Gerenciar Especialidades</span>
+              <i data-feather="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="text-center p-6 bg-white/50 rounded-xl backdrop-blur-sm">
+          <div class="text-3xl font-bold text-gray-900">24/7</div>
+          <div class="text-sm text-gray-600 mt-1">Disponibilidade</div>
+        </div>
+        <div class="text-center p-6 bg-white/50 rounded-xl backdrop-blur-sm">
+          <div class="text-3xl font-bold text-gray-900">100%</div>
+          <div class="text-sm text-gray-600 mt-1">Seguro</div>
+        </div>
+        <div class="text-center p-6 bg-white/50 rounded-xl backdrop-blur-sm">
+          <div class="text-3xl font-bold text-gray-900">∞</div>
+          <div class="text-sm text-gray-600 mt-1">Escalabilidade</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 mt-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="text-center text-gray-500 text-sm">
+          <p>
+            &copy; 2025 MedPass. Sistema de gestão hospitalar desenvolvido para
+            otimizar o atendimento.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Initialize Feather Icons -->
+    <script>
+      feather.replace();
+    </script>
+  </body>
+</html>
