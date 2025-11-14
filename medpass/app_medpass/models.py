@@ -108,3 +108,91 @@ class Profissional(models.Model):
 
     def __str__(self):
         return f"{self.nome} - CRM {self.crm}/{self.uf_crm}"
+
+
+class Senha(models.Model):
+    """
+    Modelo para gerenciar as senhas geradas na central de senhas.
+    """
+    TIPO_CHOICES = [
+        ('N', 'Normal'),
+        ('P', 'Preferencial'),
+        ('U', 'Urgência'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('aguardando', 'Aguardando'),
+        ('chamando', 'Chamando'),
+        ('atendendo', 'Em Atendimento'),
+        ('concluido', 'Concluído'),
+        ('cancelado', 'Cancelado'),
+    ]
+    
+    numero = models.CharField(
+        max_length=10,
+        verbose_name="Número da Senha",
+        help_text="Número da senha gerada (ex: N001, P002, U003)"
+    )
+    tipo = models.CharField(
+        max_length=1,
+        choices=TIPO_CHOICES,
+        default='N',
+        verbose_name="Tipo de Senha",
+        help_text="Tipo da senha (Normal, Preferencial, Urgência)"
+    )
+    especialidade = models.ForeignKey(
+        Especialidade,
+        on_delete=models.PROTECT,
+        related_name='senhas',
+        verbose_name="Especialidade",
+        help_text="Especialidade para qual a senha foi gerada"
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='aguardando',
+        verbose_name="Status",
+        help_text="Status atual da senha"
+    )
+    profissional = models.ForeignKey(
+        Profissional,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='senhas_atendidas',
+        verbose_name="Profissional",
+        help_text="Profissional que está atendendo a senha"
+    )
+    guiche = models.CharField(
+        max_length=10,
+        blank=True,
+        verbose_name="Guichê",
+        help_text="Número do guichê de atendimento"
+    )
+    criado_em = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Data de Criação"
+    )
+    chamado_em = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Data de Chamada"
+    )
+    atendido_em = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Data de Início do Atendimento"
+    )
+    concluido_em = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Data de Conclusão"
+    )
+    
+    class Meta:
+        verbose_name = "Senha"
+        verbose_name_plural = "Senhas"
+        ordering = ['-criado_em']
+    
+    def __str__(self):
+        return f"{self.numero} - {self.get_tipo_display()} - {self.especialidade.nome}"

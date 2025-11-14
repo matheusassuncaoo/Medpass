@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Especialidade, Profissional
+from .models import Especialidade, Profissional, Senha
 
 # Register your models here.
 
@@ -40,6 +40,28 @@ class ProfissionalAdmin(admin.ModelAdmin):
         }),
         ('Metadados', {
             'fields': ('criado_em', 'atualizado_em'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(Senha)
+class SenhaAdmin(admin.ModelAdmin):
+    list_display = ['numero', 'tipo', 'especialidade', 'status', 'guiche', 'profissional', 'criado_em']
+    list_filter = ['status', 'tipo', 'especialidade', 'criado_em']
+    search_fields = ['numero', 'guiche']
+    readonly_fields = ['criado_em', 'chamado_em', 'atendido_em', 'concluido_em']
+    autocomplete_fields = []
+    date_hierarchy = 'criado_em'
+    fieldsets = (
+        ('Informações da Senha', {
+            'fields': ('numero', 'tipo', 'especialidade', 'status')
+        }),
+        ('Atendimento', {
+            'fields': ('profissional', 'guiche')
+        }),
+        ('Timestamps', {
+            'fields': ('criado_em', 'chamado_em', 'atendido_em', 'concluido_em'),
             'classes': ('collapse',)
         }),
     )
