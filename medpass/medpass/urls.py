@@ -1,11 +1,15 @@
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from app_medpass import views
 
 urlpatterns = [
     # Admin do Django
     path('admin/', admin.site.urls),
+    
+    # API RESTful
+    path('api/', include('app_medpass.api_urls')),
+    path('api-auth/', include('rest_framework.urls')),
     
     # Rotas que serão usadas no projeto
     # Rotas, view selecionada, nome referencia
