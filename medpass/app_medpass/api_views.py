@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
 from datetime import date, timedelta
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 from .models import Especialidade, Profissional, Senha
 from .serializers import (
     EspecialidadeSerializer, 
@@ -14,42 +16,106 @@ from .serializers import (
 )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Listar Especialidades",
+        description="Retorna a lista de todas as especialidades médicas cadastradas no sistema.",
+        tags=['Especialidades']
+    ),
+    create=extend_schema(
+        summary="Criar Especialidade",
+        description="Cadastra uma nova especialidade médica no sistema.",
+        tags=['Especialidades']
+    ),
+    retrieve=extend_schema(
+        summary="Obter Especialidade",
+        description="Retorna os detalhes de uma especialidade específica.",
+        tags=['Especialidades']
+    ),
+    update=extend_schema(
+        summary="Atualizar Especialidade",
+        description="Atualiza completamente uma especialidade existente.",
+        tags=['Especialidades']
+    ),
+    partial_update=extend_schema(
+        summary="Atualizar Parcialmente Especialidade",
+        description="Atualiza parcialmente uma especialidade existente.",
+        tags=['Especialidades']
+    ),
+    destroy=extend_schema(
+        summary="Deletar Especialidade",
+        description="Remove uma especialidade do sistema.",
+        tags=['Especialidades']
+    ),
+)
 class EspecialidadeViewSet(viewsets.ModelViewSet):
     """
-    API endpoint para Especialidades.
+    ViewSet para gerenciamento de Especialidades Médicas.
     
-    list: Lista todas as especialidades
-    create: Cria uma nova especialidade
-    retrieve: Retorna uma especialidade específica
-    update: Atualiza uma especialidade
-    partial_update: Atualiza parcialmente uma especialidade
-    destroy: Remove uma especialidade
+    Permite operações CRUD completas para especialidades médicas.
     """
     queryset = Especialidade.objects.all()
     serializer_class = EspecialidadeSerializer
     
+    @extend_schema(
+        summary="Listar Especialidades Ativas",
+        description="Retorna apenas as especialidades que estão ativas no sistema.",
+        tags=['Especialidades']
+    )
     @action(detail=False, methods=['get'])
     def ativas(self, request):
         """Retorna apenas especialidades ativas"""
-        especialidades = self.queryset.filter(ativo=True)
+        especialidades = self.queryset.filter(ativa=True)
         serializer = self.get_serializer(especialidades, many=True)
         return Response(serializer.data)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Listar Profissionais",
+        description="Retorna a lista de todos os profissionais de saúde cadastrados.",
+        tags=['Profissionais']
+    ),
+    create=extend_schema(
+        summary="Criar Profissional",
+        description="Cadastra um novo profissional de saúde no sistema.",
+        tags=['Profissionais']
+    ),
+    retrieve=extend_schema(
+        summary="Obter Profissional",
+        description="Retorna os detalhes de um profissional específico.",
+        tags=['Profissionais']
+    ),
+    update=extend_schema(
+        summary="Atualizar Profissional",
+        description="Atualiza completamente um profissional existente.",
+        tags=['Profissionais']
+    ),
+    partial_update=extend_schema(
+        summary="Atualizar Parcialmente Profissional",
+        description="Atualiza parcialmente um profissional existente.",
+        tags=['Profissionais']
+    ),
+    destroy=extend_schema(
+        summary="Deletar Profissional",
+        description="Remove um profissional do sistema.",
+        tags=['Profissionais']
+    ),
+)
 class ProfissionalViewSet(viewsets.ModelViewSet):
     """
-    API endpoint para Profissionais.
+    ViewSet para gerenciamento de Profissionais de Saúde.
     
-    list: Lista todos os profissionais
-    create: Cria um novo profissional
-    retrieve: Retorna um profissional específico
-    update: Atualiza um profissional
-    partial_update: Atualiza parcialmente um profissional
-    destroy: Remove um profissional
+    Permite operações CRUD completas para profissionais médicos.
     """
     queryset = Profissional.objects.all()
     serializer_class = ProfissionalSerializer
     
+    @extend_schema(
+        summary="Listar Profissionais Ativos",
+        description="Retorna apenas os profissionais que estão ativos no sistema.",
+        tags=['Profissionais']
+    )
     @action(detail=False, methods=['get'])
     def ativos(self, request):
         """Retorna apenas profissionais ativos"""
@@ -57,6 +123,20 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(profissionais, many=True)
         return Response(serializer.data)
     
+    @extend_schema(
+        summary="Listar Profissionais por Especialidade",
+        description="Retorna profissionais filtrados por especialidade específica.",
+        parameters=[
+            OpenApiParameter(
+                name='especialidade_id',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                description='ID da especialidade para filtrar',
+                required=True
+            ),
+        ],
+        tags=['Profissionais']
+    )
     @action(detail=False, methods=['get'])
     def por_especialidade(self, request):
         """Retorna profissionais filtrados por especialidade"""
@@ -75,16 +155,62 @@ class ProfissionalViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Listar Senhas",
+        description="Retorna a lista de todas as senhas do sistema.",
+        tags=['Senhas']
+    ),
+    create=extend_schema(
+        summary="Gerar Nova Senha",
+        description="Gera uma nova senha para atendimento. O número da senha é gerado automaticamente no formato: SIGLA-TIPO-NÚMERO (ex: CAR-N-001).",
+        tags=['Senhas'],
+        examples=[
+            OpenApiExample(
+                'Senha Normal',
+                value={
+                    'especialidade': 1,
+                    'tipo': 'normal'
+                },
+                request_only=True,
+            ),
+            OpenApiExample(
+                'Senha Prioritária',
+                value={
+                    'especialidade': 1,
+                    'tipo': 'prioritario'
+                },
+                request_only=True,
+            ),
+        ]
+    ),
+    retrieve=extend_schema(
+        summary="Obter Senha",
+        description="Retorna os detalhes de uma senha específica.",
+        tags=['Senhas']
+    ),
+    update=extend_schema(
+        summary="Atualizar Senha",
+        description="Atualiza completamente uma senha existente.",
+        tags=['Senhas']
+    ),
+    partial_update=extend_schema(
+        summary="Atualizar Parcialmente Senha",
+        description="Atualiza parcialmente uma senha existente.",
+        tags=['Senhas']
+    ),
+    destroy=extend_schema(
+        summary="Deletar Senha",
+        description="Remove uma senha do sistema.",
+        tags=['Senhas']
+    ),
+)
 class SenhaViewSet(viewsets.ModelViewSet):
     """
-    API endpoint para Senhas.
+    ViewSet para gerenciamento do Sistema de Senhas.
     
-    list: Lista todas as senhas
-    create: Gera uma nova senha
-    retrieve: Retorna uma senha específica
-    update: Atualiza uma senha
-    partial_update: Atualiza parcialmente uma senha
-    destroy: Remove uma senha
+    Permite operações completas de gerenciamento de senhas, incluindo
+    geração, chamada, atendimento e finalização.
     """
     queryset = Senha.objects.all().select_related('especialidade')
     
@@ -93,6 +219,11 @@ class SenhaViewSet(viewsets.ModelViewSet):
             return SenhaCreateSerializer
         return SenhaSerializer
     
+    @extend_schema(
+        summary="Senhas Aguardando",
+        description="Retorna todas as senhas que estão aguardando serem chamadas, ordenadas por ordem de chegada.",
+        tags=['Senhas']
+    )
     @action(detail=False, methods=['get'])
     def aguardando(self, request):
         """Retorna senhas aguardando atendimento"""
@@ -110,14 +241,14 @@ class SenhaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def em_atendimento(self, request):
         """Retorna senhas em atendimento"""
-        senhas = self.queryset.filter(status='atendimento').order_by('-atendido_em')
+        senhas = self.queryset.filter(status='atendendo').order_by('-atendido_em')
         serializer = self.get_serializer(senhas, many=True)
         return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def finalizadas(self, request):
         """Retorna senhas finalizadas"""
-        senhas = self.queryset.filter(status='finalizado').order_by('-finalizado_em')
+        senhas = self.queryset.filter(status='concluido').order_by('-concluido_em')
         serializer = self.get_serializer(senhas, many=True)
         return Response(serializer.data)
     
@@ -137,10 +268,10 @@ class SenhaViewSet(viewsets.ModelViewSet):
         total_hoje = self.queryset.filter(criado_em__date=hoje).count()
         aguardando = self.queryset.filter(status='aguardando').count()
         chamando = self.queryset.filter(status='chamando').count()
-        em_atendimento = self.queryset.filter(status='atendimento').count()
+        em_atendimento = self.queryset.filter(status='atendendo').count()
         finalizadas_hoje = self.queryset.filter(
-            status='finalizado',
-            finalizado_em__date=hoje
+            status='concluido',
+            concluido_em__date=hoje
         ).count()
         
         return Response({
@@ -185,7 +316,7 @@ class SenhaViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        senha.status = 'atendimento'
+        senha.status = 'atendendo'
         senha.atendido_em = timezone.now()
         senha.save()
         
@@ -196,14 +327,14 @@ class SenhaViewSet(viewsets.ModelViewSet):
         """Finaliza o atendimento de uma senha"""
         senha = self.get_object()
         
-        if senha.status not in ['chamando', 'atendimento']:
+        if senha.status not in ['chamando', 'atendendo']:
             return Response(
                 {'error': 'Senha não está em atendimento'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        senha.status = 'finalizado'
-        senha.finalizado_em = timezone.now()
+        senha.status = 'concluido'
+        senha.concluido_em = timezone.now()
         senha.save()
         
         return Response(SenhaSerializer(senha).data)
@@ -213,14 +344,14 @@ class SenhaViewSet(viewsets.ModelViewSet):
         """Cancela uma senha"""
         senha = self.get_object()
         
-        if senha.status == 'finalizado':
+        if senha.status == 'concluido':
             return Response(
                 {'error': 'Senha já foi finalizada'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        senha.status = 'finalizado'
-        senha.finalizado_em = timezone.now()
+        senha.status = 'cancelado'
+        senha.concluido_em = timezone.now()
         senha.save()
         
         return Response(SenhaSerializer(senha).data)
@@ -228,10 +359,10 @@ class SenhaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def proxima(self, request):
         """Retorna a próxima senha a ser chamada (prioritárias primeiro)"""
-        # Primeiro verifica se há prioritárias aguardando
+        # Primeiro verifica se há prioritárias/urgências aguardando
         senha_prioritaria = self.queryset.filter(
             status='aguardando',
-            tipo='prioritario'
+            tipo__in=['P', 'U']
         ).order_by('criado_em').first()
         
         if senha_prioritaria:
@@ -241,7 +372,7 @@ class SenhaViewSet(viewsets.ModelViewSet):
         # Se não há prioritária, pega a próxima normal
         senha_normal = self.queryset.filter(
             status='aguardando',
-            tipo='normal'
+            tipo='N'
         ).order_by('criado_em').first()
         
         if senha_normal:
@@ -263,7 +394,7 @@ class SenhaViewSet(viewsets.ModelViewSet):
         
         # Últimas 5 senhas chamadas
         ultimas_chamadas = self.queryset.filter(
-            status__in=['atendimento', 'finalizado'],
+            status__in=['atendendo', 'concluido'],
             chamado_em__isnull=False
         ).order_by('-chamado_em')[:5]
         
@@ -272,9 +403,9 @@ class SenhaViewSet(viewsets.ModelViewSet):
         
         # Estatísticas
         total_hoje = self.queryset.filter(criado_em__date=hoje).count()
-        total_atendidas = self.queryset.filter(status='finalizado', finalizado_em__date=hoje).count()
+        total_atendidas = self.queryset.filter(status='concluido', concluido_em__date=hoje).count()
         total_aguardando = self.queryset.filter(status='aguardando').count()
-        total_em_atendimento = self.queryset.filter(status='atendimento').count()
+        total_em_atendimento = self.queryset.filter(status='atendendo').count()
         
         return Response({
             'senha_chamando': SenhaSerializer(senha_chamando).data if senha_chamando else None,

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_spectacular',
     'app_medpass',
 ]
 
@@ -151,4 +152,27 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# DRF Spectacular (Swagger/OpenAPI)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'MedPass API',
+    'DESCRIPTION': 'API RESTful para sistema de gerenciamento de senhas médicas',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {
+        'name': 'MedPass',
+        'email': 'contato@medpass.com',
+    },
+    'LICENSE': {
+        'name': 'MIT License',
+    },
+    'TAGS': [
+        {'name': 'Especialidades', 'description': 'Gerenciamento de especialidades médicas'},
+        {'name': 'Profissionais', 'description': 'Gerenciamento de profissionais de saúde'},
+        {'name': 'Senhas', 'description': 'Sistema de senhas e atendimento'},
+    ],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': r'/api',
 }

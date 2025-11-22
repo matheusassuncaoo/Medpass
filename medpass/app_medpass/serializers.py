@@ -5,7 +5,7 @@ from .models import Especialidade, Profissional, Senha
 class EspecialidadeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Especialidade
-        fields = ['id', 'nome', 'descricao', 'ativo', 'criado_em', 'atualizado_em']
+        fields = ['id', 'nome', 'descricao', 'ativa', 'criado_em', 'atualizado_em']
         read_only_fields = ['criado_em', 'atualizado_em']
 
 
@@ -28,10 +28,10 @@ class SenhaSerializer(serializers.ModelSerializer):
         model = Senha
         fields = ['id', 'numero', 'especialidade', 'especialidade_nome', 
                   'tipo', 'tipo_display', 'status', 'status_display',
-                  'guiche', 'criado_em', 'chamado_em', 'atendido_em', 
-                  'finalizado_em', 'atualizado_em']
+                  'guiche', 'profissional', 'criado_em', 'chamado_em', 'atendido_em', 
+                  'concluido_em']
         read_only_fields = ['numero', 'criado_em', 'chamado_em', 'atendido_em', 
-                           'finalizado_em', 'atualizado_em']
+                           'concluido_em']
 
 
 class SenhaCreateSerializer(serializers.ModelSerializer):
@@ -43,19 +43,18 @@ class SenhaCreateSerializer(serializers.ModelSerializer):
         # Gera o número da senha automaticamente
         from datetime import date
         especialidade = validated_data['especialidade']
-        tipo = validated_data.get('tipo', 'normal')
+        tipo = validated_data.get('tipo', 'N')
         
         # Contar senhas da especialidade no dia
         hoje = date.today()
         count = Senha.objects.filter(
             especialidade=especialidade,
+            tipo=tipo,
             criado_em__date=hoje
         ).count() + 1
         
-        # Formato: SIGLA + TIPO + NUMERO (ex: CAR-N-001)
-        sigla = especialidade.nome[:3].upper()
-        tipo_letra = 'P' if tipo == 'prioritario' else 'N'
-        numero = f"{sigla}-{tipo_letra}-{count:03d}"
+        # Formato: TIPO + NUMERO (ex: N001, P002, U003)
+        numero = f"{tipo}{count:03d}"
         
         senha = Senha.objects.create(
             numero=numero,
@@ -69,4 +68,4 @@ class SenhaChamarSerializer(serializers.Serializer):
 
 
 class SenhaStatusSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(choices=['aguardando', 'chamando', 'atendimento', 'finalizado'])
+    status = serializers.ChoiceField(choices=['aguardando', 'chamando', 'atendendo', 'concluido', 'cancelado'])

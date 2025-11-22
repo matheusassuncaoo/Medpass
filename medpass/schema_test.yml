@@ -1,0 +1,1370 @@
+openapi: 3.0.3
+info:
+  title: MedPass API
+  version: 1.0.0
+  description: API RESTful para sistema de gerenciamento de senhas médicas
+  contact:
+    name: MedPass
+    email: contato@medpass.com
+  license:
+    name: MIT License
+paths:
+  /api/especialidades/:
+    get:
+      operationId: especialidades_list
+      description: Retorna a lista de todas as especialidades médicas cadastradas
+        no sistema.
+      summary: Listar Especialidades
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: Um número de página dentro do conjunto de resultados paginado.
+        schema:
+          type: integer
+      tags:
+      - Especialidades
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEspecialidadeList'
+          description: ''
+    post:
+      operationId: especialidades_create
+      description: Cadastra uma nova especialidade médica no sistema.
+      summary: Criar Especialidade
+      tags:
+      - Especialidades
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EspecialidadeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EspecialidadeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EspecialidadeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especialidade'
+          description: ''
+  /api/especialidades/{id}/:
+    get:
+      operationId: especialidades_retrieve
+      description: Retorna os detalhes de uma especialidade específica.
+      summary: Obter Especialidade
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Especialidade.
+        required: true
+      tags:
+      - Especialidades
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especialidade'
+          description: ''
+    put:
+      operationId: especialidades_update
+      description: Atualiza completamente uma especialidade existente.
+      summary: Atualizar Especialidade
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Especialidade.
+        required: true
+      tags:
+      - Especialidades
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EspecialidadeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EspecialidadeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EspecialidadeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especialidade'
+          description: ''
+    patch:
+      operationId: especialidades_partial_update
+      description: Atualiza parcialmente uma especialidade existente.
+      summary: Atualizar Parcialmente Especialidade
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Especialidade.
+        required: true
+      tags:
+      - Especialidades
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEspecialidadeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEspecialidadeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEspecialidadeRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especialidade'
+          description: ''
+    delete:
+      operationId: especialidades_destroy
+      description: Remove uma especialidade do sistema.
+      summary: Deletar Especialidade
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Especialidade.
+        required: true
+      tags:
+      - Especialidades
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/especialidades/ativas/:
+    get:
+      operationId: especialidades_ativas_retrieve
+      description: Retorna apenas as especialidades que estão ativas no sistema.
+      summary: Listar Especialidades Ativas
+      tags:
+      - Especialidades
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Especialidade'
+          description: ''
+  /api/profissionais/:
+    get:
+      operationId: profissionais_list
+      description: Retorna a lista de todos os profissionais de saúde cadastrados.
+      summary: Listar Profissionais
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: Um número de página dentro do conjunto de resultados paginado.
+        schema:
+          type: integer
+      tags:
+      - Profissionais
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfissionalList'
+          description: ''
+    post:
+      operationId: profissionais_create
+      description: Cadastra um novo profissional de saúde no sistema.
+      summary: Criar Profissional
+      tags:
+      - Profissionais
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfissionalRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProfissionalRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProfissionalRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profissional'
+          description: ''
+  /api/profissionais/{id}/:
+    get:
+      operationId: profissionais_retrieve
+      description: Retorna os detalhes de um profissional específico.
+      summary: Obter Profissional
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Profissional.
+        required: true
+      tags:
+      - Profissionais
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profissional'
+          description: ''
+    put:
+      operationId: profissionais_update
+      description: Atualiza completamente um profissional existente.
+      summary: Atualizar Profissional
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Profissional.
+        required: true
+      tags:
+      - Profissionais
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfissionalRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProfissionalRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProfissionalRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profissional'
+          description: ''
+    patch:
+      operationId: profissionais_partial_update
+      description: Atualiza parcialmente um profissional existente.
+      summary: Atualizar Parcialmente Profissional
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Profissional.
+        required: true
+      tags:
+      - Profissionais
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfissionalRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfissionalRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfissionalRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profissional'
+          description: ''
+    delete:
+      operationId: profissionais_destroy
+      description: Remove um profissional do sistema.
+      summary: Deletar Profissional
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Profissional.
+        required: true
+      tags:
+      - Profissionais
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/profissionais/ativos/:
+    get:
+      operationId: profissionais_ativos_retrieve
+      description: Retorna apenas os profissionais que estão ativos no sistema.
+      summary: Listar Profissionais Ativos
+      tags:
+      - Profissionais
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profissional'
+          description: ''
+  /api/profissionais/por_especialidade/:
+    get:
+      operationId: profissionais_por_especialidade_retrieve
+      description: Retorna profissionais filtrados por especialidade específica.
+      summary: Listar Profissionais por Especialidade
+      parameters:
+      - in: query
+        name: especialidade_id
+        schema:
+          type: integer
+        description: ID da especialidade para filtrar
+        required: true
+      tags:
+      - Profissionais
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profissional'
+          description: ''
+  /api/senhas/:
+    get:
+      operationId: senhas_list
+      description: Retorna a lista de todas as senhas do sistema.
+      summary: Listar Senhas
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: Um número de página dentro do conjunto de resultados paginado.
+        schema:
+          type: integer
+      tags:
+      - Senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSenhaList'
+          description: ''
+    post:
+      operationId: senhas_create
+      description: 'Gera uma nova senha para atendimento. O número da senha é gerado
+        automaticamente no formato: SIGLA-TIPO-NÚMERO (ex: CAR-N-001).'
+      summary: Gerar Nova Senha
+      tags:
+      - Senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SenhaCreateRequest'
+            examples:
+              SenhaNormal:
+                value:
+                  especialidade: 1
+                  tipo: normal
+                summary: Senha Normal
+              SenhaPrioritária:
+                value:
+                  especialidade: 1
+                  tipo: prioritario
+                summary: Senha Prioritária
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SenhaCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SenhaCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SenhaCreate'
+          description: ''
+  /api/senhas/{id}/:
+    get:
+      operationId: senhas_retrieve
+      description: Retorna os detalhes de uma senha específica.
+      summary: Obter Senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - Senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+    put:
+      operationId: senhas_update
+      description: Atualiza completamente uma senha existente.
+      summary: Atualizar Senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - Senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+    patch:
+      operationId: senhas_partial_update
+      description: Atualiza parcialmente uma senha existente.
+      summary: Atualizar Parcialmente Senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - Senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSenhaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSenhaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSenhaRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+    delete:
+      operationId: senhas_destroy
+      description: Remove uma senha do sistema.
+      summary: Deletar Senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - Senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/senhas/{id}/cancelar/:
+    post:
+      operationId: senhas_cancelar_create
+      description: Cancela uma senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/{id}/chamar/:
+    post:
+      operationId: senhas_chamar_create
+      description: Chama uma senha para atendimento
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/{id}/finalizar/:
+    post:
+      operationId: senhas_finalizar_create
+      description: Finaliza o atendimento de uma senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/{id}/iniciar_atendimento/:
+    post:
+      operationId: senhas_iniciar_atendimento_create
+      description: Inicia o atendimento de uma senha
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Um valor inteiro único que identifica este Senha.
+        required: true
+      tags:
+      - senhas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SenhaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/aguardando/:
+    get:
+      operationId: senhas_aguardando_retrieve
+      description: Retorna todas as senhas que estão aguardando serem chamadas, ordenadas
+        por ordem de chegada.
+      summary: Senhas Aguardando
+      tags:
+      - Senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/chamando/:
+    get:
+      operationId: senhas_chamando_retrieve
+      description: Retorna senhas sendo chamadas
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/em_atendimento/:
+    get:
+      operationId: senhas_em_atendimento_retrieve
+      description: Retorna senhas em atendimento
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/estatisticas/:
+    get:
+      operationId: senhas_estatisticas_retrieve
+      description: Retorna estatísticas das senhas
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/finalizadas/:
+    get:
+      operationId: senhas_finalizadas_retrieve
+      description: Retorna senhas finalizadas
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/hoje/:
+    get:
+      operationId: senhas_hoje_retrieve
+      description: Retorna senhas geradas hoje
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/painel/:
+    get:
+      operationId: senhas_painel_retrieve
+      description: Retorna dados para o painel de senhas
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+  /api/senhas/proxima/:
+    get:
+      operationId: senhas_proxima_retrieve
+      description: Retorna a próxima senha a ser chamada (prioritárias primeiro)
+      tags:
+      - senhas
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Senha'
+          description: ''
+components:
+  schemas:
+    Especialidade:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          title: Nome da Especialidade
+          description: 'Nome da especialidade médica (ex: Cardiologia, Pediatria)'
+          maxLength: 100
+        descricao:
+          type: string
+          title: Descrição
+          description: Descrição detalhada da especialidade
+        ativa:
+          type: boolean
+          description: Indica se a especialidade está ativa no sistema
+        criado_em:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Data de Criação
+        atualizado_em:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Data de Atualização
+      required:
+      - atualizado_em
+      - criado_em
+      - id
+      - nome
+    EspecialidadeRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          title: Nome da Especialidade
+          description: 'Nome da especialidade médica (ex: Cardiologia, Pediatria)'
+          maxLength: 100
+        descricao:
+          type: string
+          title: Descrição
+          description: Descrição detalhada da especialidade
+        ativa:
+          type: boolean
+          description: Indica se a especialidade está ativa no sistema
+      required:
+      - nome
+    PaginatedEspecialidadeList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Especialidade'
+    PaginatedProfissionalList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Profissional'
+    PaginatedSenhaList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Senha'
+    PatchedEspecialidadeRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          title: Nome da Especialidade
+          description: 'Nome da especialidade médica (ex: Cardiologia, Pediatria)'
+          maxLength: 100
+        descricao:
+          type: string
+          title: Descrição
+          description: Descrição detalhada da especialidade
+        ativa:
+          type: boolean
+          description: Indica se a especialidade está ativa no sistema
+    PatchedProfissionalRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          title: Nome Completo
+          description: Nome completo do profissional de saúde
+          maxLength: 200
+        crm:
+          type: string
+          minLength: 1
+          description: Número do CRM (Conselho Regional de Medicina)
+          pattern: ^\d{4,8}$
+          maxLength: 8
+        especialidade:
+          type: integer
+          description: Especialidade médica do profissional
+        telefone:
+          type: string
+          description: Telefone de contato
+          maxLength: 15
+        email:
+          type: string
+          format: email
+          title: E-mail
+          description: E-mail de contato
+          maxLength: 254
+        ativo:
+          type: boolean
+          description: Indica se o profissional está ativo no sistema
+    PatchedSenhaRequest:
+      type: object
+      properties:
+        especialidade:
+          type: integer
+          description: Especialidade para qual a senha foi gerada
+        tipo:
+          allOf:
+          - $ref: '#/components/schemas/TipoEnum'
+          title: Tipo de Senha
+          description: |-
+            Tipo da senha (Normal, Preferencial, Urgência)
+
+            * `N` - Normal
+            * `P` - Preferencial
+            * `U` - Urgência
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Status atual da senha
+
+            * `aguardando` - Aguardando
+            * `chamando` - Chamando
+            * `atendendo` - Em Atendimento
+            * `concluido` - Concluído
+            * `cancelado` - Cancelado
+        guiche:
+          type: string
+          title: Guichê
+          description: Número do guichê de atendimento
+          maxLength: 10
+        profissional:
+          type: integer
+          nullable: true
+          description: Profissional que está atendendo a senha
+    Profissional:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nome:
+          type: string
+          title: Nome Completo
+          description: Nome completo do profissional de saúde
+          maxLength: 200
+        crm:
+          type: string
+          description: Número do CRM (Conselho Regional de Medicina)
+          pattern: ^\d{4,8}$
+          maxLength: 8
+        especialidade:
+          type: integer
+          description: Especialidade médica do profissional
+        especialidade_nome:
+          type: string
+          readOnly: true
+        telefone:
+          type: string
+          description: Telefone de contato
+          maxLength: 15
+        email:
+          type: string
+          format: email
+          title: E-mail
+          description: E-mail de contato
+          maxLength: 254
+        ativo:
+          type: boolean
+          description: Indica se o profissional está ativo no sistema
+        criado_em:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Data de Criação
+        atualizado_em:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Data de Atualização
+      required:
+      - atualizado_em
+      - criado_em
+      - crm
+      - especialidade
+      - especialidade_nome
+      - id
+      - nome
+    ProfissionalRequest:
+      type: object
+      properties:
+        nome:
+          type: string
+          minLength: 1
+          title: Nome Completo
+          description: Nome completo do profissional de saúde
+          maxLength: 200
+        crm:
+          type: string
+          minLength: 1
+          description: Número do CRM (Conselho Regional de Medicina)
+          pattern: ^\d{4,8}$
+          maxLength: 8
+        especialidade:
+          type: integer
+          description: Especialidade médica do profissional
+        telefone:
+          type: string
+          description: Telefone de contato
+          maxLength: 15
+        email:
+          type: string
+          format: email
+          title: E-mail
+          description: E-mail de contato
+          maxLength: 254
+        ativo:
+          type: boolean
+          description: Indica se o profissional está ativo no sistema
+      required:
+      - crm
+      - especialidade
+      - nome
+    Senha:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        numero:
+          type: string
+          readOnly: true
+          title: Número da Senha
+          description: 'Número da senha gerada (ex: N001, P002, U003)'
+        especialidade:
+          type: integer
+          description: Especialidade para qual a senha foi gerada
+        especialidade_nome:
+          type: string
+          readOnly: true
+        tipo:
+          allOf:
+          - $ref: '#/components/schemas/TipoEnum'
+          title: Tipo de Senha
+          description: |-
+            Tipo da senha (Normal, Preferencial, Urgência)
+
+            * `N` - Normal
+            * `P` - Preferencial
+            * `U` - Urgência
+        tipo_display:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Status atual da senha
+
+            * `aguardando` - Aguardando
+            * `chamando` - Chamando
+            * `atendendo` - Em Atendimento
+            * `concluido` - Concluído
+            * `cancelado` - Cancelado
+        status_display:
+          type: string
+          readOnly: true
+        guiche:
+          type: string
+          title: Guichê
+          description: Número do guichê de atendimento
+          maxLength: 10
+        profissional:
+          type: integer
+          nullable: true
+          description: Profissional que está atendendo a senha
+        criado_em:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Data de Criação
+        chamado_em:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Data de Chamada
+        atendido_em:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Data de Início do Atendimento
+        concluido_em:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Data de Conclusão
+      required:
+      - atendido_em
+      - chamado_em
+      - concluido_em
+      - criado_em
+      - especialidade
+      - especialidade_nome
+      - id
+      - numero
+      - status_display
+      - tipo_display
+    SenhaCreate:
+      type: object
+      properties:
+        especialidade:
+          type: integer
+          description: Especialidade para qual a senha foi gerada
+        tipo:
+          allOf:
+          - $ref: '#/components/schemas/TipoEnum'
+          title: Tipo de Senha
+          description: |-
+            Tipo da senha (Normal, Preferencial, Urgência)
+
+            * `N` - Normal
+            * `P` - Preferencial
+            * `U` - Urgência
+      required:
+      - especialidade
+    SenhaCreateRequest:
+      type: object
+      properties:
+        especialidade:
+          type: integer
+          description: Especialidade para qual a senha foi gerada
+        tipo:
+          allOf:
+          - $ref: '#/components/schemas/TipoEnum'
+          title: Tipo de Senha
+          description: |-
+            Tipo da senha (Normal, Preferencial, Urgência)
+
+            * `N` - Normal
+            * `P` - Preferencial
+            * `U` - Urgência
+      required:
+      - especialidade
+    SenhaRequest:
+      type: object
+      properties:
+        especialidade:
+          type: integer
+          description: Especialidade para qual a senha foi gerada
+        tipo:
+          allOf:
+          - $ref: '#/components/schemas/TipoEnum'
+          title: Tipo de Senha
+          description: |-
+            Tipo da senha (Normal, Preferencial, Urgência)
+
+            * `N` - Normal
+            * `P` - Preferencial
+            * `U` - Urgência
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          description: |-
+            Status atual da senha
+
+            * `aguardando` - Aguardando
+            * `chamando` - Chamando
+            * `atendendo` - Em Atendimento
+            * `concluido` - Concluído
+            * `cancelado` - Cancelado
+        guiche:
+          type: string
+          title: Guichê
+          description: Número do guichê de atendimento
+          maxLength: 10
+        profissional:
+          type: integer
+          nullable: true
+          description: Profissional que está atendendo a senha
+      required:
+      - especialidade
+    StatusEnum:
+      enum:
+      - aguardando
+      - chamando
+      - atendendo
+      - concluido
+      - cancelado
+      type: string
+      description: |-
+        * `aguardando` - Aguardando
+        * `chamando` - Chamando
+        * `atendendo` - Em Atendimento
+        * `concluido` - Concluído
+        * `cancelado` - Cancelado
+    TipoEnum:
+      enum:
+      - N
+      - P
+      - U
+      type: string
+      description: |-
+        * `N` - Normal
+        * `P` - Preferencial
+        * `U` - Urgência
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+tags:
+- name: Especialidades
+  description: Gerenciamento de especialidades médicas
+- name: Profissionais
+  description: Gerenciamento de profissionais de saúde
+- name: Senhas
+  description: Sistema de senhas e atendimento
