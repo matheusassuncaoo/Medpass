@@ -17,7 +17,7 @@
         "workbench.colorTheme": "Dracula", 
       
         "editor.fontFamily": "'SF Pro Text', 'SF Pro Display', 'San Francisco', 'Segoe UI', system-ui, sans-serif",
-        "editor.fontLigatures": true, // Habilita ligaduras se a fonte suportar
+        "editor.fontLigatures": true,
      
         "indentRainbow.colors": [
           "rgba(255,255,64,0.07)",
@@ -33,12 +33,12 @@
         "njpwerner.autodocstring",
         
       
-        "ms-vsliveshare.vsliveshare", // Live Share
+        "ms-vsliveshare.vsliveshare",
 
  
-        "oderwat.indent-rainbow",     // "Aquele que deixa colorido os espaçamentos"
-        "dracula-theme.theme-dracula", // Tema Dark popular (Dracula)
-        "pkief.material-icon-theme"    // Ícones bonitos para as pastas
+        "oderwat.indent-rainbow",     
+        "dracula-theme.theme-dracula",  
+        "pkief.material-icon-theme"   
       ]
     }
   },
