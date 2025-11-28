@@ -1,0 +1,59 @@
+{
+  "name": "Python 3.14.0 (Ultimate)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // --- Configurações de Python ---
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.languageServer": "Pylance",
+        "editor.formatOnSave": true,
+
+        // --- Configurações Visuais (Tema e Fonte) ---
+        // Define o tema escuro
+        "workbench.colorTheme": "Dracula", 
+        // Tenta usar SF Pro. Se não tiver no seu PC, cai para a fonte de sistema padrão
+        "editor.fontFamily": "'SF Pro Text', 'SF Pro Display', 'San Francisco', 'Segoe UI', system-ui, sans-serif",
+        "editor.fontLigatures": true, // Habilita ligaduras se a fonte suportar
+
+        // --- Configurações do Indent Rainbow ---
+        "indentRainbow.colors": [
+          "rgba(255,255,64,0.07)",
+          "rgba(127,255,127,0.07)",
+          "rgba(255,127,255,0.07)",
+          "rgba(79,236,236,0.07)"
+        ]
+      },
+      "extensions": [
+        // --- Python ---
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "njpwerner.autodocstring",
+        
+        // --- Colaboração ---
+        "ms-vsliveshare.vsliveshare", // Live Share
+
+        // --- Visual ---
+        "oderwat.indent-rainbow",     // "Aquele que deixa colorido os espaçamentos"
+        "dracula-theme.theme-dracula", // Tema Dark popular (Dracula)
+        "pkief.material-icon-theme"    // Ícones bonitos para as pastas
+      ]
+    }
+  },
+
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "username": "vscode"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "postCreateCommand": "pip install --upgrade pip && pip install black pylint",
+
+  "remoteUser": "vscode"
+}
