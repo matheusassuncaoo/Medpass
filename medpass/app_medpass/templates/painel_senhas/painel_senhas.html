@@ -7,276 +7,319 @@
     <title>Painel de Senhas - MedPass</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @keyframes pulse-soft {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.95; }
-        }
-        .calling {
-            animation: pulse-soft 2s ease-in-out infinite;
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .slide-in {
-            animation: slideIn 0.6s ease-out;
-        }
-        .senha-card {
-            transition: all 0.3s ease;
-        }
-        .senha-chamando {
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            box-shadow: 0 15px 50px rgba(34, 197, 94, 0.3);
-            transform: scale(1.02);
-        }
-        .status-verde {
-            background-color: #22c55e;
-        }
-        .status-amarelo {
-            background-color: #eab308;
-        }
-        .status-vermelho {
-            background-color: #ef4444;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes pulse-border { 0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.5); } 50% { box-shadow: 0 0 0 15px rgba(37, 99, 235, 0); } }
+        .pulse-border { animation: pulse-border 2s infinite; }
+        @keyframes slide-in { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-in { animation: slide-in 0.5s ease-out; }
     </style>
 </head>
-<body class="bg-white min-h-screen text-gray-900">
+<body class="bg-gray-900 min-h-screen">
     <!-- Header -->
-    <header class="bg-blue-600 shadow-lg">
-        <div class="max-w-7xl mx-auto px-6 py-5">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="p-2 bg-white rounded-lg">
-                        <i data-feather="activity" class="w-8 h-8 text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-4xl font-bold text-white">MedPass</h1>
-                        <p class="text-sm text-blue-100">Painel de Senhas</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <div id="clock" class="text-3xl font-bold text-white"></div>
-                    <div id="date" class="text-sm text-blue-100"></div>
-                </div>
+    <header class="bg-blue-600">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i data-feather="activity" class="w-8 h-8 text-white"></i>
+                <h1 class="text-2xl font-bold text-white">MedPass</h1>
+            </div>
+            <div class="flex items-center space-x-4 text-white">
+                <span id="relogio" class="text-lg">--:--:--</span>
+                <button onclick="testarAudio()" class="text-white/80 hover:text-white" title="Testar áudio">
+                    <i data-feather="volume-2" class="w-5 h-5"></i>
+                </button>
+                <a href="{% url 'home' %}" class="text-white/80 hover:text-white">
+                    <i data-feather="home" class="w-5 h-5"></i>
+                </a>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-6 py-8">
-        <!-- Senha Sendo Chamada (Destaque) -->
-        <div id="senha-destaque" class="mb-8">
-            {% if senha_chamando %}
-            <div class="senha-chamando senha-card rounded-3xl p-12 text-center slide-in calling">
-                <div class="flex items-center justify-center mb-6">
-                    <i data-feather="volume-2" class="w-16 h-16 mr-4 text-white"></i>
-                    <h2 class="text-6xl font-bold text-white">SENHA CHAMADA</h2>
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Senhas Chamando -->
+            <div class="lg:col-span-2 space-y-6">
+                {% if senha_chamando_guiche %}
+                <div id="chamada-guiche" class="bg-blue-600 rounded-2xl p-8 text-center pulse-border slide-in"
+                     data-senha="{{ senha_chamando_guiche.numero }}"
+                     data-local="guichê {{ senha_chamando_guiche.guiche.numero }}"
+                     data-timestamp="{{ senha_chamando_guiche.chamado_guiche_em|date:'U' }}">
+                    <p class="text-white/80 text-sm mb-2">GUICHÊ CHAMANDO</p>
+                    <p class="text-7xl md:text-8xl font-extrabold text-white mb-4">{{ senha_chamando_guiche.numero }}</p>
+                    <p class="text-2xl text-white">Guichê <strong>{{ senha_chamando_guiche.guiche.numero }}</strong></p>
                 </div>
-                <div class="bg-white/30 backdrop-blur rounded-2xl p-8 mb-6">
-                    <div class="text-9xl font-black mb-4 text-white">{{ senha_chamando.numero }}</div>
-                    <div class="text-4xl font-semibold mb-2 text-white">{{ senha_chamando.especialidade.nome }}</div>
-                    {% if senha_chamando.guiche %}
-                    <div class="text-6xl font-bold mt-6 text-white bg-blue-600 rounded-xl py-4 px-8 inline-block">
-                        <i data-feather="map-pin" class="w-12 h-12 inline mr-2"></i>
-                        GUICHÊ {{ senha_chamando.guiche }}
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="text-2xl text-white font-semibold">
-                    Por favor, dirija-se ao guichê indicado
-                </div>
-            </div>
-            {% endif %}
-        </div>
+                {% endif %}
 
-        <!-- Grid de Senhas -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Últimas Senhas Chamadas -->
-            <div class="bg-white shadow-xl rounded-2xl p-6 border-2 border-gray-200">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="p-3 status-verde rounded-xl">
-                        <i data-feather="check-circle" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800">Últimas Chamadas</h3>
+                {% if senha_chamando_medico %}
+                <div id="chamada-medico" class="bg-green-600 rounded-2xl p-8 text-center pulse-border slide-in"
+                     data-senha="{{ senha_chamando_medico.numero }}"
+                     data-local="{% if senha_chamando_medico.profissional.sala %}sala {{ senha_chamando_medico.profissional.sala }}{% else %}doutor {{ senha_chamando_medico.profissional.nome }}{% endif %}"
+                     data-timestamp="{{ senha_chamando_medico.chamado_medico_em|date:'U' }}">
+                    <p class="text-white/80 text-sm mb-2">CONSULTA - MÉDICO CHAMANDO</p>
+                    <p class="text-7xl md:text-8xl font-extrabold text-white mb-4">{{ senha_chamando_medico.numero }}</p>
+                    <p class="text-2xl text-white">
+                        {% if senha_chamando_medico.profissional.sala %}Sala <strong>{{ senha_chamando_medico.profissional.sala }}</strong>
+                        {% else %}Dr(a). <strong>{{ senha_chamando_medico.profissional.nome }}</strong>{% endif %}
+                    </p>
                 </div>
-                
-                <div class="space-y-3 max-h-96 overflow-y-auto">
-                    {% for senha in ultimas_chamadas %}
-                    <div class="bg-gray-50 rounded-xl p-4 border-2 border-green-200 hover:border-green-400 transition-all">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <div class="text-3xl font-bold text-green-600">{{ senha.numero }}</div>
-                                <div class="text-sm text-gray-700 mt-1 font-medium">{{ senha.especialidade.nome }}</div>
-                            </div>
-                            <div class="text-right">
-                                {% if senha.guiche %}
-                                <div class="text-2xl font-bold text-blue-600">Guichê {{ senha.guiche }}</div>
-                                {% endif %}
-                                <div class="text-xs text-gray-500 mt-1">{{ senha.chamado_em|date:"H:i" }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="text-center py-12 text-gray-400">
-                        <i data-feather="inbox" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
-                        <p class="text-lg">Nenhuma senha chamada ainda</p>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
+                {% endif %}
 
-            <!-- Senhas Aguardando -->
-            <div class="bg-white shadow-xl rounded-2xl p-6 border-2 border-gray-200">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="p-3 status-amarelo rounded-xl">
-                        <i data-feather="clock" class="w-8 h-8 text-white"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800">Aguardando Atendimento</h3>
+                {% if not senha_chamando_guiche and not senha_chamando_medico %}
+                <div class="bg-gray-800 rounded-2xl p-12 text-center">
+                    <i data-feather="clock" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                    <p class="text-2xl text-gray-500">Aguardando próxima chamada...</p>
                 </div>
-                
-                <div class="space-y-3 max-h-96 overflow-y-auto">
-                    {% for senha in senhas_aguardando %}
-                    <div class="bg-gray-50 rounded-xl p-4 border-2 border-yellow-200 hover:border-yellow-400 transition-all">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <div class="text-3xl font-bold text-yellow-600">{{ senha.numero }}</div>
-                                <div class="text-sm text-gray-700 mt-1 font-medium">{{ senha.especialidade.nome }}</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="px-3 py-1 status-amarelo rounded-lg text-white text-sm font-semibold">
-                                    {{ senha.get_tipo_display }}
+                {% endif %}
+
+                <!-- Últimas Chamadas -->
+                <div class="bg-gray-800 rounded-xl p-6">
+                    <h3 class="text-white font-semibold mb-4 flex items-center">
+                        <i data-feather="list" class="w-5 h-5 mr-2"></i>
+                        Últimas Chamadas
+                    </h3>
+                    <div class="space-y-2">
+                        {% for senha in ultimas_chamadas %}
+                        <div class="flex items-center justify-between bg-gray-700 rounded-lg px-4 py-3 hover:bg-gray-600 transition-colors">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-2xl font-bold text-white">{{ senha.numero }}</span>
+                                <div>
+                                    <p class="text-white font-medium">{{ senha.especialidade.nome }}</p>
+                                    <p class="text-xs text-gray-400">
+                                        {% if senha.guiche %}
+                                        <span class="text-blue-400">Guichê {{ senha.guiche.numero }}</span>
+                                        {% elif senha.profissional %}
+                                        <span class="text-green-400">
+                                            {% if senha.profissional.sala %}Sala {{ senha.profissional.sala }}{% else %}{{ senha.profissional.nome }}{% endif %}
+                                        </span>
+                                        {% endif %}
+                                        {% if senha.chamado_guiche_em %}
+                                        · {{ senha.chamado_guiche_em|date:"H:i" }}
+                                        {% elif senha.chamado_medico_em %}
+                                        · {{ senha.chamado_medico_em|date:"H:i" }}
+                                        {% endif %}
+                                    </p>
                                 </div>
-                                <div class="text-xs text-gray-500 mt-1">{{ senha.criado_em|date:"H:i" }}</div>
                             </div>
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if senha.status == 'em_triagem' %}bg-blue-500/20 text-blue-400
+                                {% elif senha.status == 'em_consulta' %}bg-green-500/20 text-green-400
+                                {% elif senha.status == 'concluido' %}bg-gray-500/20 text-gray-400
+                                {% else %}bg-yellow-500/20 text-yellow-400{% endif %}">
+                                {{ senha.get_status_display }}
+                            </span>
                         </div>
+                        {% empty %}
+                        <p class="text-gray-500 text-center py-8">Nenhuma chamada recente</p>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="text-center py-12 text-gray-400">
-                        <i data-feather="inbox" class="w-16 h-16 mx-auto mb-4 opacity-50"></i>
-                        <p class="text-lg">Nenhuma senha aguardando</p>
-                    </div>
-                    {% endfor %}
                 </div>
             </div>
-        </div>
 
-        <!-- Estatísticas do Dia -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-            <div class="bg-white shadow-xl rounded-xl p-6 border-2 border-gray-200 text-center">
-                <i data-feather="hash" class="w-8 h-8 mx-auto mb-2 text-blue-600"></i>
-                <div class="text-4xl font-bold text-blue-600">{{ total_hoje }}</div>
-                <div class="text-sm text-gray-600 mt-1 font-medium">Senhas Geradas Hoje</div>
-            </div>
-            <div class="bg-white shadow-xl rounded-xl p-6 border-2 border-gray-200 text-center">
-                <i data-feather="check-circle" class="w-8 h-8 mx-auto mb-2 text-green-600"></i>
-                <div class="text-4xl font-bold text-green-600">{{ total_atendidas }}</div>
-                <div class="text-sm text-gray-600 mt-1 font-medium">Atendimentos Concluídos</div>
-            </div>
-            <div class="bg-white shadow-xl rounded-xl p-6 border-2 border-gray-200 text-center">
-                <i data-feather="clock" class="w-8 h-8 mx-auto mb-2 text-yellow-600"></i>
-                <div class="text-4xl font-bold text-yellow-600">{{ total_aguardando }}</div>
-                <div class="text-sm text-gray-600 mt-1 font-medium">Aguardando</div>
-            </div>
-            <div class="bg-white shadow-xl rounded-xl p-6 border-2 border-gray-200 text-center">
-                <i data-feather="activity" class="w-8 h-8 mx-auto mb-2 text-red-600"></i>
-                <div class="text-4xl font-bold text-red-600">{{ total_em_atendimento }}</div>
-                <div class="text-sm text-gray-600 mt-1 font-medium">Em Atendimento</div>
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Estatísticas -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-800 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-blue-400">{{ total_aguardando_guiche }}</p>
+                        <p class="text-xs text-gray-400">Aguardando Guichê</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-blue-400">{{ total_aguardando_medico }}</p>
+                        <p class="text-xs text-gray-400">Aguardando Médico</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-blue-400">{{ total_hoje }}</p>
+                        <p class="text-xs text-gray-400">Senhas Hoje</p>
+                    </div>
+                    <div class="bg-gray-800 rounded-xl p-4 text-center">
+                        <p class="text-3xl font-bold text-green-400">{{ total_atendidas }}</p>
+                        <p class="text-xs text-gray-400">Atendidas</p>
+                    </div>
+                </div>
+
+                <!-- Fila Guichê -->
+                <div class="bg-gray-800 rounded-xl overflow-hidden">
+                    <div class="bg-blue-600 px-4 py-2">
+                        <h3 class="text-white text-sm font-semibold flex items-center">
+                            <i data-feather="clock" class="w-4 h-4 mr-2"></i>
+                            Fila do Guichê
+                        </h3>
+                    </div>
+                    <div class="p-4 max-h-64 overflow-y-auto space-y-2">
+                        {% for senha in senhas_aguardando_guiche %}
+                        <div class="flex justify-between items-center bg-gray-700 rounded px-3 py-2">
+                            <div>
+                                <span class="font-bold text-white text-lg">{{ senha.numero }}</span>
+                                <p class="text-xs text-gray-400">{{ senha.especialidade.nome }}</p>
+                            </div>
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full
+                                {% if senha.tipo == 'U' %}bg-red-500/20 text-red-400
+                                {% elif senha.tipo == 'P' %}bg-purple-500/20 text-purple-400
+                                {% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                                {{ senha.get_tipo_display }}
+                            </span>
+                        </div>
+                        {% empty %}
+                        <p class="text-gray-500 text-center text-sm py-4">Fila vazia</p>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Django Template Data -->
-    <script id="senha-data" type="application/json">
-    {
-        "hasSenhaChamando": {% if senha_chamando %}true{% else %}false{% endif %},
-        "numero": "{% if senha_chamando %}{{ senha_chamando.numero }}{% endif %}",
-        "especialidade": "{% if senha_chamando %}{{ senha_chamando.especialidade.nome }}{% endif %}",
-        "guiche": "{% if senha_chamando %}{{ senha_chamando.guiche|default:'' }}{% endif %}"
-    }
-    </script>
-
     <script>
         feather.replace();
-
-        // Atualizar relógio
-        function updateClock() {
-            var now = new Date();
-            var hours = String(now.getHours()).padStart(2, '0');
-            var minutes = String(now.getMinutes()).padStart(2, '0');
-            var seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = hours + ':' + minutes + ':' + seconds;
-            
-            var days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-            var months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            var dateStr = days[now.getDay()] + ', ' + now.getDate() + ' de ' + months[now.getMonth()] + ' de ' + now.getFullYear();
-            document.getElementById('date').textContent = dateStr;
-        }
         
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        // Ler dados do template
-        var senhaData = JSON.parse(document.getElementById('senha-data').textContent);
-        var isSpeaking = false;
-        var shouldReload = false;
+        // Armazena as últimas senhas chamadas para detectar novas (usando timestamp)
+        let ultimaChamadaGuiche = localStorage.getItem('ultimaChamadaGuiche') || '';
+        let ultimaChamadaMedico = localStorage.getItem('ultimaChamadaMedico') || '';
         
-        function speakSenha(numero, especialidade, guiche) {
-            if ('speechSynthesis' in window && numero && !isSpeaking) {
-                isSpeaking = true;
-                window.speechSynthesis.cancel();
-                
-                var utterance = new SpeechSynthesisUtterance();
-                utterance.lang = 'pt-BR';
-                utterance.rate = 0.85;
-                utterance.pitch = 1;
-                utterance.volume = 1;
-                
-                var text = 'Senha ' + numero.split('').join(', ') + '. ';
-                text += 'Especialidade, ' + especialidade + '. ';
-                if (guiche) {
-                    text += 'Dirija-se ao guichê, ' + guiche;
+        // Função para falar o texto usando Web Speech API
+        function falar(texto) {
+            return new Promise((resolve) => {
+                if (!('speechSynthesis' in window)) {
+                    console.log('Speech não suportado');
+                    resolve();
+                    return;
                 }
                 
-                utterance.text = text;
+                // Cancela qualquer fala em andamento
+                speechSynthesis.cancel();
                 
-                utterance.onend = function() {
-                    isSpeaking = false;
-                    // Se estava esperando para recarregar, recarrega agora
-                    if (shouldReload) {
-                        location.reload();
+                // Aguarda um pouco para garantir que o cancel foi processado
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(texto);
+                    utterance.lang = 'pt-BR';
+                    utterance.rate = 0.8;
+                    utterance.pitch = 1.1;
+                    utterance.volume = 1;
+                    
+                    // Tenta usar uma voz brasileira
+                    const voices = speechSynthesis.getVoices();
+                    const ptVoice = voices.find(v => v.lang === 'pt-BR') 
+                                || voices.find(v => v.lang.startsWith('pt'));
+                    if (ptVoice) {
+                        utterance.voice = ptVoice;
                     }
-                };
+                    
+                    utterance.onend = () => {
+                        console.log('Fala concluída');
+                        resolve();
+                    };
+                    utterance.onerror = (e) => {
+                        console.error('Erro na fala:', e);
+                        resolve();
+                    };
+                    
+                    speechSynthesis.speak(utterance);
+                }, 100);
+            });
+        }
+        
+        // Função para formatar a senha para fala
+        function formatarSenhaParaFala(senha) {
+            // Separa letras e números
+            const match = senha.match(/^([A-Z]+)(\d+)$/);
+            if (!match) return senha;
+            
+            const letras = match[1];
+            const numeros = match[2];
+            
+            // Fala cada letra separadamente e o número sem zeros à esquerda
+            const letrasFaladas = letras.split('').join(', ');
+            const numeroFalado = parseInt(numeros, 10);
+            
+            return `${letrasFaladas}, ${numeroFalado}`;
+        }
+        
+        // Função para chamar a senha com áudio (chamada dupla)
+        async function chamarSenhaComAudio(senha, local) {
+            console.log('Chamando senha:', senha, 'Local:', local);
+            const senhaFormatada = formatarSenhaParaFala(senha);
+            
+            // Primeira chamada
+            await falar(`Atenção! Senha ${senhaFormatada}. Dirija-se ao ${local}.`);
+            
+            // Aguarda 2 segundos
+            await new Promise(r => setTimeout(r, 2000));
+            
+            // Segunda chamada (mais curta)
+            await falar(`Senha ${senhaFormatada}, ${local}.`);
+        }
+        
+        // Testar áudio
+        function testarAudio() {
+            falar('Sistema de áudio funcionando. Teste de chamada de senha.');
+        }
+        
+        // Verifica se há novas chamadas ao carregar a página
+        async function verificarNovasChamadas() {
+            const chamadaGuiche = document.getElementById('chamada-guiche');
+            const chamadaMedico = document.getElementById('chamada-medico');
+            
+            if (chamadaGuiche) {
+                const senha = chamadaGuiche.dataset.senha;
+                const local = chamadaGuiche.dataset.local;
+                const timestamp = chamadaGuiche.dataset.timestamp;
                 
-                utterance.onerror = function() {
-                    isSpeaking = false;
-                };
+                // Usa senha + timestamp como chave única (detecta rechamadas)
+                const chave = `${senha}-${timestamp}`;
+                console.log('Guichê - Chave atual:', chave, 'Última:', ultimaChamadaGuiche);
                 
-                window.speechSynthesis.speak(utterance);
+                if (chave !== ultimaChamadaGuiche) {
+                    ultimaChamadaGuiche = chave;
+                    localStorage.setItem('ultimaChamadaGuiche', chave);
+                    console.log('Nova chamada detectada!');
+                    await chamarSenhaComAudio(senha, local);
+                }
+            }
+            
+            if (chamadaMedico) {
+                const senha = chamadaMedico.dataset.senha;
+                const local = chamadaMedico.dataset.local;
+                const timestamp = chamadaMedico.dataset.timestamp;
+                
+                // Usa senha + timestamp como chave única (detecta rechamadas)
+                const chave = `${senha}-${timestamp}`;
+                console.log('Médico - Chave atual:', chave, 'Última:', ultimaChamadaMedico);
+                
+                if (chave !== ultimaChamadaMedico) {
+                    ultimaChamadaMedico = chave;
+                    localStorage.setItem('ultimaChamadaMedico', chave);
+                    console.log('Nova chamada detectada!');
+                    await chamarSenhaComAudio(senha, local);
+                }
             }
         }
-
-        // Chamar senha ao carregar se existir
-        if (senhaData.hasSenhaChamando && senhaData.numero) {
-            setTimeout(function() {
-                speakSenha(senhaData.numero, senhaData.especialidade, senhaData.guiche);
-            }, 500);
+        
+        // Atualiza relógio
+        function atualizarRelogio() {
+            const agora = new Date();
+            document.getElementById('relogio').textContent = 
+                agora.toLocaleTimeString('pt-BR');
         }
-
-        // Auto-refresh a cada 5 segundos, mas só quando não estiver falando
-        setInterval(function() {
-            if (isSpeaking) {
-                shouldReload = true; // Marca para recarregar quando terminar
-            } else {
-                location.reload();
+        setInterval(atualizarRelogio, 1000);
+        atualizarRelogio();
+        
+        // Carrega as vozes (necessário em alguns navegadores)
+        if ('speechSynthesis' in window) {
+            // Algumas vezes as vozes demoram para carregar
+            speechSynthesis.getVoices();
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = () => {
+                    speechSynthesis.getVoices();
+                    console.log('Vozes carregadas');
+                };
             }
-        }, 5000);
+        }
+        
+        // Verifica novas chamadas após carregar vozes
+        setTimeout(verificarNovasChamadas, 1500);
+        
+        // Auto-refresh a cada 5 segundos
+        setInterval(() => location.reload(), 5000);
     </script>
 </body>
 </html>

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Selecionar Médico - MedPass{% endblock %}
+
+{% block header_subtitle %}
+<span class="text-white/60 text-sm ml-2">/ Selecionar Médico</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white text-center">Selecione o Médico</h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for m in medicos %}
+                <a href="{% url 'painel_medico' %}?medico={{ m.id }}" 
+                   class="border-2 border-gray-200 rounded-xl p-4 flex items-center space-x-4 hover:border-blue-500 hover:bg-blue-50 transition-all">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-feather="user" class="w-7 h-7 text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">{{ m.nome }}</p>
+                        <p class="text-sm text-gray-500">{{ m.especialidade.nome }}</p>
+                        <p class="text-xs text-blue-600">{% if m.sala %}Sala {{ m.sala }}{% else %}CRM {{ m.crm }}/{{ m.uf_crm }}{% endif %}</p>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="col-span-full text-center py-8">
+                    <i data-feather="alert-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                    <p class="text-gray-500">Nenhum médico cadastrado</p>
+                    <a href="{% url 'cadastrar_medicos' %}" class="text-blue-600 hover:underline mt-2 inline-block">Cadastrar Médico</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

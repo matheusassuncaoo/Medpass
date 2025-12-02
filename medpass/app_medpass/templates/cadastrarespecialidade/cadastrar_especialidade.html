@@ -1,150 +1,73 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Especialidades - MedPass</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-</head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-6">
-                <div class="flex items-center space-x-3">
-                    <a href="{% url 'home' %}" class="p-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-                        <i data-feather="activity" class="w-6 h-6 text-white"></i>
-                    </a>
-                    <h1 class="text-2xl font-bold text-gray-900">MedPass</h1>
-                    <span class="text-sm text-gray-500">/ Cadastro de Especialidades</span>
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Especialidade - MedPass{% endblock %}
+
+{% block header_subtitle %}
+<span class="text-white/60 text-sm ml-2">/ Cadastrar Especialidade</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Formulário -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-lg font-semibold text-white flex items-center">
+                <i data-feather="plus-circle" class="w-5 h-5 mr-2"></i>
+                Nova Especialidade
+            </h2>
+        </div>
+        <form method="POST" class="p-6 space-y-4">
+            {% csrf_token %}
+            <div class="grid grid-cols-3 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome *</label>
+                    <input type="text" name="nome" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Ex: Cardiologia">
                 </div>
-                <a href="{% url 'home' %}" class="text-sm text-blue-600 hover:text-blue-700 flex items-center space-x-1">
-                    <i data-feather="arrow-left" class="w-4 h-4"></i>
-                    <span>Voltar ao Início</span>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sigla *</label>
+                    <input type="text" name="sigla" required maxlength="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 uppercase text-center font-bold" placeholder="C">
+                    <p class="text-xs text-gray-500 mt-1">Ex: C, D, G</p>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                <textarea name="descricao" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Descrição da especialidade..."></textarea>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-sm text-blue-700"><strong>Formato da senha:</strong> TIPO + SIGLA + NÚMERO</p>
+                <p class="text-xs text-blue-600 mt-1">Ex: NC001 (Normal + Cardiologia), PD002 (Preferencial + Dermatologia)</p>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors">
+                Cadastrar Especialidade
+            </button>
+        </form>
+    </div>
+
+    <!-- Lista -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-lg font-semibold text-white">Especialidades Cadastradas</h2>
+        </div>
+        <div class="p-6 max-h-96 overflow-y-auto">
+            {% for esp in especialidades %}
+            <div class="border border-gray-200 rounded-lg p-4 mb-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span class="font-bold text-blue-600">{{ esp.sigla }}</span>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">{{ esp.nome }}</p>
+                        {% if esp.descricao %}<p class="text-sm text-gray-500">{{ esp.descricao|truncatechars:50 }}</p>{% endif %}
+                    </div>
+                </div>
+                <a href="{% url 'deletar_especialidade' esp.id %}" onclick="return confirm('Remover {{ esp.nome }}?')" class="text-red-600 hover:text-red-800 p-2">
+                    <i data-feather="trash-2" class="w-5 h-5"></i>
                 </a>
             </div>
+            {% empty %}
+            <p class="text-center text-gray-500 py-8">Nenhuma especialidade cadastrada</p>
+            {% endfor %}
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="text-center mb-12">
-            <div class="flex items-center justify-center w-20 h-20 bg-purple-100 rounded-xl mb-6 mx-auto">
-                <i data-feather="clipboard" class="w-10 h-10 text-purple-600"></i>
-            </div>
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Cadastro de Especialidades</h2>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Configure e organize as diferentes especialidades médicas do hospital
-            </p>
-        </div>
-
-        <!-- Messages -->
-        {% if messages %}
-            <div class="mb-8 space-y-4">
-                {% for message in messages %}
-                <div class="{% if message.tags == 'success' %}bg-green-50 border-green-200 text-green-800{% elif message.tags == 'error' %}bg-red-50 border-red-200 text-red-800{% else %}bg-blue-50 border-blue-200 text-blue-800{% endif %} border rounded-lg p-4 flex items-center">
-                    <i data-feather="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}alert-circle{% else %}info{% endif %}" class="w-5 h-5 mr-3"></i>
-                    <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <!-- Formulário de Cadastro -->
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <h3 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
-                <i data-feather="plus-circle" class="w-6 h-6 mr-2 text-purple-600"></i>
-                Nova Especialidade
-            </h3>
-            <form method="POST" action="{% url 'cadastrar_especialidade' %}" class="space-y-6">
-                {% csrf_token %}
-                <div>
-                    <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">
-                        Nome da Especialidade <span class="text-red-500">*</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        id="nome" 
-                        name="nome" 
-                        required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Ex: Cardiologia, Pediatria, Ortopedia"
-                    >
-                </div>
-                <div>
-                    <label for="descricao" class="block text-sm font-medium text-gray-700 mb-2">
-                        Descrição
-                    </label>
-                    <textarea 
-                        id="descricao" 
-                        name="descricao" 
-                        rows="3"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        placeholder="Descrição detalhada da especialidade (opcional)"
-                    ></textarea>
-                </div>
-                <div class="flex justify-end">
-                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-8 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2">
-                        <i data-feather="save" class="w-5 h-5"></i>
-                        <span>Cadastrar Especialidade</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Lista de Especialidades -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-            <h3 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
-                <i data-feather="list" class="w-6 h-6 mr-2 text-purple-600"></i>
-                Especialidades Cadastradas
-            </h3>
-            {% if especialidades %}
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data de Cadastro</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            {% for especialidade in especialidades %}
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                            <i data-feather="clipboard" class="w-5 h-5 text-purple-600"></i>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ especialidade.nome }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-500">{{ especialidade.descricao|default:"—"|truncatewords:10 }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ especialidade.criado_em|date:"d/m/Y H:i" }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="text-center py-12">
-                    <i data-feather="inbox" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
-                    <p class="text-gray-500">Nenhuma especialidade cadastrada ainda.</p>
-                </div>
-            {% endif %}
-        </div>
-    </main>
-
-    <script>
-        feather.replace();
-    </script>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

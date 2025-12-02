@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Selecionar Guichê - MedPass{% endblock %}
+
+{% block header_subtitle %}
+<span class="text-white/60 text-sm ml-2">/ Selecionar Guichê</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white text-center">Selecione seu Guichê</h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {% for g in guiches %}
+                <a href="{% url 'painel_guiche' %}?guiche={{ g.id }}" 
+                   class="border-2 border-gray-200 rounded-xl p-6 text-center hover:border-blue-500 hover:bg-blue-50 transition-all group">
+                    <div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200">
+                        <span class="text-2xl font-bold text-blue-600">{{ g.numero }}</span>
+                    </div>
+                    <p class="font-medium text-gray-800">{{ g.nome }}</p>
+                </a>
+                {% empty %}
+                <div class="col-span-full text-center py-8">
+                    <i data-feather="alert-circle" class="w-12 h-12 text-gray-300 mx-auto mb-3"></i>
+                    <p class="text-gray-500">Nenhum guichê cadastrado</p>
+                    <a href="{% url 'cadastrar_guiche' %}" class="text-blue-600 hover:underline mt-2 inline-block">Cadastrar Guichê</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

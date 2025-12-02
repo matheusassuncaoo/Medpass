@@ -155,6 +155,11 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+# URL de Login
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
 # DRF Spectacular (Swagger/OpenAPI)
 SPECTACULAR_SETTINGS = {
     'TITLE': 'MedPass API',

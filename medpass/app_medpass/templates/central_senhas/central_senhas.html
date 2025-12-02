@@ -1,237 +1,121 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central de Senhas - MedPass</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-</head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-6">
-                <div class="flex items-center space-x-3">
-                    <a href="{% url 'home' %}" class="p-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-                        <i data-feather="activity" class="w-6 h-6 text-white"></i>
-                    </a>
-                    <h1 class="text-2xl font-bold text-gray-900">MedPass</h1>
-                    <span class="text-sm text-gray-500">/ Central de Senhas</span>
-                </div>
-                <a href="{% url 'home' %}" class="text-sm text-blue-600 hover:text-blue-700 flex items-center space-x-1">
-                    <i data-feather="arrow-left" class="w-4 h-4"></i>
-                    <span>Voltar ao Início</span>
-                </a>
-            </div>
+{% extends 'base.html' %}
+
+{% block title %}Central de Senhas - MedPass{% endblock %}
+
+{% block header_subtitle %}
+<span class="text-white/60 text-sm ml-2">/ Central de Senhas</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Gerar Senha -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-lg font-semibold text-white flex items-center">
+                <i data-feather="plus-circle" class="w-5 h-5 mr-2"></i>
+                Gerar Nova Senha
+            </h2>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Messages -->
-        {% if messages %}
-        <div class="mb-6 space-y-2">
-            {% for message in messages %}
-            <div class="{% if message.tags == 'error' %}bg-red-100 border-red-500 text-red-700{% elif message.tags == 'success' %}bg-green-100 border-green-500 text-green-700{% else %}bg-blue-100 border-blue-500 text-blue-700{% endif %} border-l-4 p-4 rounded">
-                <p class="font-medium">{{ message }}</p>
+        <form method="POST" action="{% url 'gerar_senha' %}" class="p-6 space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Especialidade</label>
+                <select name="especialidade" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Selecione...</option>
+                    {% for esp in especialidades %}
+                    <option value="{{ esp.id }}">{{ esp.nome }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Coluna 1: Gerar Senha -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl">
-                        <i data-feather="plus-circle" class="w-6 h-6 text-blue-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900">Gerar Senha</h3>
-                </div>
-
-                <form method="POST" action="{% url 'gerar_senha' %}" class="space-y-4">
-                    {% csrf_token %}
-                    <div>
-                        <label for="especialidade" class="block text-sm font-medium text-gray-700 mb-2">Especialidade</label>
-                        <select name="especialidade" id="especialidade" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Selecione...</option>
-                            {% for esp in especialidades %}
-                            <option value="{{ esp.id }}">{{ esp.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="tipo" class="block text-sm font-medium text-gray-700 mb-2">Tipo de Senha</label>
-                        <select name="tipo" id="tipo" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="N">Normal</option>
-                            <option value="P">Preferencial</option>
-                            <option value="U">Urgência</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
-                        <i data-feather="hash" class="w-5 h-5"></i>
-                        <span>Gerar Senha</span>
-                    </button>
-                </form>
-            </div>
-
-            <!-- Coluna 2: Senhas Aguardando -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-xl">
-                        <i data-feather="clock" class="w-6 h-6 text-yellow-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900">Aguardando ({{ senhas_aguardando.count }})</h3>
-                </div>
-
-                <div class="space-y-3 max-h-96 overflow-y-auto">
-                    {% for senha in senhas_aguardando %}
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-blue-500 transition-colors">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-2xl font-bold text-blue-600">{{ senha.numero }}</span>
-                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded">{{ senha.get_tipo_display }}</span>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="tipo" value="N" checked class="peer sr-only">
+                        <div class="p-3 bg-gray-100 border-2 border-gray-200 rounded-lg text-center peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                            <span class="text-lg font-bold text-gray-700">N</span>
+                            <p class="text-xs text-gray-500">Normal</p>
                         </div>
-                        <p class="text-sm text-gray-600 mb-3">{{ senha.especialidade.nome }}</p>
-                        <p class="text-xs text-gray-500">{{ senha.criado_em|date:"H:i" }}</p>
-                        <button onclick="chamarSenha({{ senha.id }})" class="mt-3 w-full bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
-                            Chamar
-                        </button>
-                    </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="tipo" value="P" class="peer sr-only">
+                        <div class="p-3 bg-gray-100 border-2 border-gray-200 rounded-lg text-center peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                            <span class="text-lg font-bold text-gray-700">P</span>
+                            <p class="text-xs text-gray-500">Preferencial</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="tipo" value="U" class="peer sr-only">
+                        <div class="p-3 bg-gray-100 border-2 border-gray-200 rounded-lg text-center peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                            <span class="text-lg font-bold text-gray-700">U</span>
+                            <p class="text-xs text-gray-500">Urgência</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                <i data-feather="printer" class="w-5 h-5"></i>
+                <span>Gerar Senha</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Senhas do Dia -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="bg-blue-600 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-white flex items-center">
+                <i data-feather="list" class="w-5 h-5 mr-2"></i>
+                Senhas de Hoje
+            </h2>
+            <div class="flex space-x-4 text-white/80 text-sm">
+                <span>Guichê: <strong class="text-white">{{ total_aguardando_guiche }}</strong></span>
+                <span>Médico: <strong class="text-white">{{ total_aguardando_medico }}</strong></span>
+            </div>
+        </div>
+        <div class="p-6 overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Senha</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Tipo</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Especialidade</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Status</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-gray-600">Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for senha in senhas_hoje %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="py-3 px-4 font-bold text-gray-800">{{ senha.numero }}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                {% if senha.tipo == 'U' %}bg-red-100 text-red-700
+                                {% elif senha.tipo == 'P' %}bg-purple-100 text-purple-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ senha.get_tipo_display }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-sm text-gray-600">{{ senha.especialidade.nome }}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full
+                                {% if 'aguardando' in senha.status %}bg-yellow-100 text-yellow-700
+                                {% elif 'chamando' in senha.status %}bg-blue-100 text-blue-700
+                                {% elif senha.status == 'em_triagem' or senha.status == 'em_consulta' %}bg-blue-100 text-blue-700
+                                {% elif senha.status == 'concluido' %}bg-green-100 text-green-700
+                                {% else %}bg-red-100 text-red-700{% endif %}">
+                                {{ senha.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-sm text-gray-500">{{ senha.criado_em|date:"H:i" }}</td>
+                    </tr>
                     {% empty %}
-                    <p class="text-center text-gray-500 py-8">Nenhuma senha aguardando</p>
+                    <tr>
+                        <td colspan="5" class="py-12 text-center text-gray-500">Nenhuma senha hoje</td>
+                    </tr>
                     {% endfor %}
-                </div>
-            </div>
-
-            <!-- Coluna 3: Senhas Chamando/Atendendo -->
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl">
-                        <i data-feather="user-check" class="w-6 h-6 text-green-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900">Em Atendimento</h3>
-                </div>
-
-                <div class="space-y-3 max-h-96 overflow-y-auto">
-                    {% for senha in senhas_chamando %}
-                    <div class="border border-green-200 bg-green-50 rounded-lg p-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-2xl font-bold text-green-600">{{ senha.numero }}</span>
-                            <span class="px-2 py-1 bg-green-200 text-green-800 text-xs font-semibold rounded">Chamando</span>
-                        </div>
-                        <p class="text-sm text-gray-700 mb-1">{{ senha.especialidade.nome }}</p>
-                        {% if senha.guiche %}
-                        <p class="text-xs text-gray-600">Guichê: {{ senha.guiche }}</p>
-                        {% endif %}
-                        <button onclick="atualizarStatus({{ senha.id }}, 'atendendo')" class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
-                            Iniciar Atendimento
-                        </button>
-                    </div>
-                    {% endfor %}
-
-                    {% for senha in senhas_atendendo %}
-                    <div class="border border-blue-200 bg-blue-50 rounded-lg p-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-2xl font-bold text-blue-600">{{ senha.numero }}</span>
-                            <span class="px-2 py-1 bg-blue-200 text-blue-800 text-xs font-semibold rounded">Atendendo</span>
-                        </div>
-                        <p class="text-sm text-gray-700 mb-1">{{ senha.especialidade.nome }}</p>
-                        {% if senha.profissional %}
-                        <p class="text-xs text-gray-600">{{ senha.profissional.nome }}</p>
-                        {% endif %}
-                        <button onclick="atualizarStatus({{ senha.id }}, 'concluido')" class="mt-3 w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors">
-                            Concluir
-                        </button>
-                    </div>
-                    {% endfor %}
-
-                    {% if not senhas_chamando and not senhas_atendendo %}
-                    <p class="text-center text-gray-500 py-8">Nenhuma senha em atendimento</p>
-                    {% endif %}
-                </div>
-            </div>
+                </tbody>
+            </table>
         </div>
-    </main>
-
-    <script>
-        feather.replace();
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        function chamarSenha(senhaId) {
-            const guiche = prompt('Número do guichê:');
-            if (!guiche) return;
-
-            const csrftoken = getCookie('csrftoken');
-            
-            fetch(`/chamar-senha/${senhaId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrftoken
-                },
-                body: `guiche=${guiche}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Erro: ' + (data.error || 'Erro desconhecido'));
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Erro ao chamar senha');
-            });
-        }
-
-        function atualizarStatus(senhaId, novoStatus) {
-            const csrftoken = getCookie('csrftoken');
-            
-            fetch(`/atualizar-status-senha/${senhaId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrftoken
-                },
-                body: `status=${novoStatus}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Erro: ' + (data.error || 'Erro desconhecido'));
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                alert('Erro ao atualizar status');
-            });
-        }
-
-        // Auto-refresh a cada 10 segundos
-        setInterval(() => {
-            location.reload();
-        }, 10000);
-    </script>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
